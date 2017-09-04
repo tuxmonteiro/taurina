@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jmeterTestPlan>
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="BZT Generated Test Plan">
+      <elementProp elementType="Arguments" guiclass="ArgumentsPanel" name="TestPlan.user_defined_variables" testclass="Arguments"/>
+    <boolProp name="TestPlan.functional_mode">false</boolProp></TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="json_example">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp elementType="LoopController" guiclass="LoopControlPanel" name="ThreadGroup.main_controller" testclass="LoopController">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <intProp name="LoopController.loops">-1</intProp></elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time"/>
+        <stringProp name="ThreadGroup.start_time"/>
+        <stringProp name="ThreadGroup.end_time"/>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <longProp name="ThreadGroup.duration">5</longProp>
+      </ThreadGroup>
+      <hashTree type="tg">
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp elementType="Header" name="">
+              <stringProp name="Header.name">host</stringProp>
+              <stringProp name="Header.value">__ping__</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="Cache">
+          <boolProp name="clearEachIteration">true</boolProp>
+          <boolProp name="useExpires">true</boolProp>
+        </CacheManager>
+        <hashTree/>
+        <DNSCacheManager guiclass="DNSCachePanel" testclass="DNSCacheManager" testname="DNS Cache Manager">
+          <collectionProp name="DNSCacheManager.servers"/>
+          <boolProp name="DNSCacheManager.clearEachIteration">false</boolProp>
+          <boolProp name="DNSCacheManager.isCustomResolver">false</boolProp>
+        </DNSCacheManager>
+        <hashTree/>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="Defaults">
+          <elementProp elementType="Arguments" guiclass="HTTPArgumentsPanel" name="HTTPsampler.Arguments" testclass="Arguments" testname="user_defined"/>
+        </ConfigTestElement>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://be1.galeb.dev.globoi.com/?noupdate=true">
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.domain">be1.galeb.dev.globoi.com</stringProp>
+          <stringProp name="HTTPSampler.port"/>
+          <stringProp name="HTTPSampler.path">/?noupdate=true</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+            <stringProp name="filename"/>
+            <stringProp name="script">vars.putObject("statsd", new com.timgroup.statsd.NonBlockingStatsDClient("my.test", "127.0.0.1", 8125));</stringProp>
+            <stringProp name="parameters"/>
+            <stringProp name="scriptLanguage">beanshell</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+            <stringProp name="filename"/>
+            <stringProp name="script">import com.timgroup.statsd.StatsDClient; StatsDClient statsd = (StatsDClient) vars.getObject("statsd"); long reqTime = sampler.sample().getTime(); if (reqTime == 0L) reqTime = 1L;statsd.incrementCounter("http" + sampler.sample().getResponseCode()); statsd.recordExecutionTime("requestTime", reqTime); statsd.recordGaugeValue("bytesPerSec", (sampler.sample().getBytes()/reqTime));</stringProp>
+            <stringProp name="parameters"/>
+            <stringProp name="scriptLanguage">beanshell</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false"/>
+      <hashTree/>
+    <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="KPI Writer"><stringProp name="filename">/tmp/taurusconfs/7/artifacts-dir/kpi-1.jtl</stringProp><objProp><name>saveConfig</name><value class="SampleSaveConfiguration"><code>true</code><encoding>false</encoding><threadCounts>true</threadCounts><samplerData>false</samplerData><assertions>false</assertions><message>true</message><responseHeaders>false</responseHeaders><xml>false</xml><latency>true</latency><requestHeaders>false</requestHeaders><hostname>true</hostname><fieldNames>true</fieldNames><label>true</label><subresults>false</subresults><saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage><dataType>false</dataType><timestamp>true</timestamp><responseData>false</responseData><success>true</success><url>false</url><threadName>true</threadName><bytes>true</bytes><responseDataOnError>false</responseDataOnError><time>true</time></value></objProp></ResultCollector><hashTree/></hashTree>
+  </hashTree>
+</jmeterTestPlan>
