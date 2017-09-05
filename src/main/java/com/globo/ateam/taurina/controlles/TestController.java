@@ -16,10 +16,9 @@
 
 package com.globo.ateam.taurina.controlles;
 
+import com.globo.ateam.taurina.model.Scenario;
 import com.globo.ateam.taurina.services.FilesService;
-import com.globo.ateam.taurina.services.JmeterService;
 import com.globo.ateam.taurina.services.QueueExecutorService;
-import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 
 @SuppressWarnings("unused")
 @RestController
@@ -45,16 +43,15 @@ public class TestController {
     private final QueueExecutorService queueExecutorService;
 
     @Autowired
-    public TestController(JmeterService jmeterService, FilesService filesService, QueueExecutorService queueExecutorService) {
+    public TestController(FilesService filesService, QueueExecutorService queueExecutorService) {
         this.filesService = filesService;
         this.queueExecutorService = queueExecutorService;
     }
 
-    @PostMapping(consumes = { "application/xml", "text/xml" })
-    public ResponseEntity<?> create(@RequestBody String body, HttpServletRequest request) throws IOException {
-        log.info(new String(ByteStreams.toByteArray(request.getInputStream())));
+    @PostMapping(consumes = { "application/json" })
+    public ResponseEntity<?> create(@RequestBody Scenario scenario, HttpServletRequest request) throws IOException {
         long id = filesService.nextId();
-        queueExecutorService.put(id, body.getBytes());
+        queueExecutorService.put(id, scenario);
         final URI locationURI = URI.create(request.getRequestURL().toString().replaceAll("/$", "") + "/" + id);
         return ResponseEntity.created(locationURI).build();
     }

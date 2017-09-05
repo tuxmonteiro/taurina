@@ -1,5 +1,7 @@
 package com.globo.ateam.taurina.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.nio.file.Paths;
 
 @Service
 public class FilesService {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private final String envTmpDir = System.getenv("TMPDIR");
     private final String tmpDir = envTmpDir != null ? envTmpDir : System.getProperty("java.io.tmpdir", "/tmp");
@@ -52,10 +56,6 @@ public class FilesService {
 
     public String pathResultFile(long testId) {
         return pathIdDirectory(testId) + "/result";
-    }
-
-    public void buildConf(long id, byte[] body) throws IOException {
-        Files.write(Paths.get(tmpDir() + "/" + id + "/test.jmx"), body);
     }
 
     public long nextId() throws IOException {

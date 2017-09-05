@@ -1,6 +1,7 @@
 package com.globo.ateam.taurina.services;
 
-import com.globo.ateam.taurina.util.Result;
+import com.globo.ateam.taurina.model.Result;
+import com.globo.ateam.taurina.model.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,12 @@ public class QueueExecutorService {
         this.jmeterService = jmeterService;
     }
 
-    public void put(long testId, byte[] body) {
+    public void put(long testId, Scenario scenario) {
         if (taskQueueOverflow(testId)) return;
         queue.add(() -> {
             log.info("executing task id " + testId);
             try {
-                filesService.buildConf(testId, body);
-                return jmeterService.start(testId);
+                return jmeterService.start(testId, scenario);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
